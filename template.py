@@ -21,10 +21,6 @@ ISOTIMEFORMAT = '%Y%m%d_%H%M%S'
 
 path = os.path.abspath('.')
 
-config = configparser.RawConfigParser()
-config.read("./secret.ini")
-Token = config["Secret"]["BotToken"]
-bot = telegram.Bot(token=Token)
 
 
 app = Flask(__name__)
