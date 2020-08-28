@@ -16,8 +16,6 @@ from telegram.ext import Dispatcher, CommandHandler, MessageHandler, Filters, Ca
 import requests
 from datetime import datetime
 import configparser
-pd.options.mode.chained_assignment = None  # default='warn'
-ISOTIMEFORMAT = '%Y%m%d_%H%M%S'
 
 path = os.path.abspath('.')
 
@@ -25,12 +23,12 @@ path = os.path.abspath('.')
 
 app = Flask(__name__)
 
-"""config = configparser.RawConfigParser()
+config = configparser.RawConfigParser()
 config.read("./secret.ini")
-Token = config["Secret"]["BotToken"]"""
+Token = config["TELEGRAM"]["ACCESS_TOKEN"]
 
-Token = ""
 bot = telegram.Bot(token=Token)
+
 
 
 @app.route('/hook', methods=['POST'])
@@ -57,12 +55,26 @@ def help_handler(bot, update):
 def reply_handler(bot, update):
     text = update.message.text
     update.message.reply_text(f"你剛剛說了 {text}")
+    
+def error_handler(bot, update, error):
+    """Log Errors caused by Updates."""
+    chat_id = update.message.chat.id
+    print(update)
+    print(error)
+    update.haveSend = True
+    update.message.reply_text(text = '對不起，系統錯誤\n歡迎回報，告訴開發者')
+
 
 dispatcher = Dispatcher(bot, None)
 dispatcher.add_handler(MessageHandler(Filters.text, reply_handler))
 dispatcher.add_handler(CommandHandler('start', start_handler))
 dispatcher.add_handler(CommandHandler('help', help_handler))
+dispatcher.add_error_handler(error_handler)
+
+
+#https://api.telegram.org/bot1101986164:AAHRD1hDy0ZVStaYn9vxt4kZxOyLfubbVVA/setWebhook?url=https://gcp-wp-0.tsraise.com/hook
+#https://api.telegram.org/bot{TOKEN}/setWebhook?url=https://gcp-wp-0.tsraise.com/hook
 
 if __name__ == "__main__":
     # Running server
-    app.run(port = 8787)
+    app.run(port = 13520)
